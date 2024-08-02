@@ -1,0 +1,49 @@
+from ev3dev2.motor import LargeMotor, OUTPUT_A, OUTPUT_B
+from ev3dev2.sensor.lego import InfraredSensor
+from ev3dev2.sound import Sound
+import time
+
+# Initialize motors and sensors
+motor_left = LargeMotor(OUTPUT_A)
+motor_right = LargeMotor(OUTPUT_B)
+infrared_sensor = InfraredSensor()
+sound = Sound()
+
+# Function to reduce speed
+def reduce_speed():
+    print("Reducing speed...")
+    motor_left.set_speed(50)  # Set speed to 50 (adjust as needed)
+    motor_right.set_speed(50)
+    motor_left.forward()
+    motor_right.forward()
+
+# Function to return to normal speed
+def normal_speed():
+    print("Normal speed...")
+    motor_left.set_speed(100)  # Set speed to normal (adjust as needed)
+    motor_right.set_speed(100)
+    motor_left.forward()
+    motor_right.forward()
+
+# Function to detect vehicles using infrared sensor
+def detect_vehicle():
+    # Assuming the infrared sensor detects distance
+    return infrared_sensor.proximity < 30  # Adjust threshold as needed
+
+def main():
+    print("Zone Detector is active.")
+    normal_speed()  # Start at normal speed
+
+    while True:
+        if detect_vehicle():
+            print("Vehicle detected!")
+            reduce_speed()
+            sound.speak("Please slow down. Speed limit in effect.")
+            time.sleep(5)  # Wait for a few seconds before checking again
+        else:
+            normal_speed()
+        
+        time.sleep(1)  # Check every second
+
+if __name__ == "__main__":
+    main()
